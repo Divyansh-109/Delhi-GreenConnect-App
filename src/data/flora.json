@@ -1,0 +1,14 @@
+[
+  {
+    "id": 1042,
+    "name": "Neem Tree",
+    "scientificName": "Azadirachta indica",
+    "description": "Known as the 'village pharmacy', the Neem tree is native to the Indian subcontinent. It is highly valued for its medicinal properties and provides excellent continuous shade.",
+    "benefits": [
+      "Air purification and abundant oxygen",
+      "Natural pesticide properties",
+      "Used in traditional Ayurvedic medicine"
+    ],
+    "image": "https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?auto=format&fit=crop&q=80&w=800"
+  }
+]

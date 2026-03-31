@@ -1,0 +1,29 @@
+{
+  "parkCenter": [28.718, 77.215],
+  "markers": [
+    {
+      "id": "gate-1",
+      "type": "gate",
+      "position": [28.718, 77.215],
+      "title": "Entry Gate 1",
+      "description": "Scan QR here.",
+      "link": null
+    },
+    {
+      "id": "flora-1042",
+      "type": "flora",
+      "position": [28.716, 77.218],
+      "title": "Neem Tree",
+      "description": "Flora ID: 1042",
+      "link": "/flora/1042"
+    },
+    {
+      "id": "facility-1",
+      "type": "restroom",
+      "position": [28.719, 77.212],
+      "title": "Restroom",
+      "description": "Public Facilities",
+      "link": null
+    }
+  ]
+}

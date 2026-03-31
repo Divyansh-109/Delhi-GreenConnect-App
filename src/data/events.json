@@ -1,0 +1,26 @@
+[
+  {
+    "id": 1,
+    "title": "Morning Golden Yoga",
+    "date": "Tomorrow, 6:00 AM",
+    "location": "Main Lawn",
+    "organizer": "DDA Wellness",
+    "tag": "Health"
+  },
+  {
+    "id": 2,
+    "title": "Guided Nature Walk",
+    "date": "Tomorrow, 4:00 PM",
+    "location": "Wetland Trail Start",
+    "organizer": "Eco-Club Delhi",
+    "tag": "Education"
+  },
+  {
+    "id": 3,
+    "title": "Community Clean-up",
+    "date": "Sunday, 9:00 AM",
+    "location": "Gate 2 Meeting Point",
+    "organizer": "GreenConnect Volunteers",
+    "tag": "Volunteer"
+  }
+]
