@@ -102,7 +102,7 @@ export default function Events() {
                 
                 <div className="mt-5 pt-4 border-t border-dashed border-sage-200 flex justify-between items-center relative">
                   <span className="text-xs text-slate-400 font-medium">By <strong className="text-slate-700 font-bold font-serif">{event.organizer}</strong></span>
-                  <button className="text-vanilla font-bold text-sm bg-primary-600 px-5 py-2 rounded-full hover:bg-primary-700 transition-colors shadow-md">RSVP</button>
+                  <button className="text-white font-bold text-sm bg-primary-600 px-6 py-2.5 rounded-full hover:bg-primary-700 transition-all shadow-lg active:scale-95">RSVP</button>
                 </div>
               </div>
             </motion.div>
