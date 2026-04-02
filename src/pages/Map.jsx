@@ -86,81 +86,82 @@ export default function MapView() {
   const [memories, setMemories] = useState([]);
   const [recenterTrigger, setRecenterTrigger] = useState(0);
 
-  useEffect(() => {
-    let unsub = () => {};
-    if (subscribeToMemories) unsub = subscribeToMemories(setMemories);
-    return () => unsub();
-  }, [subscribeToMemories]);
+  const [panelOpen, setPanelOpen] = useState(false);
 
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="h-[calc(100vh-120px)] w-full relative z-0 bg-slate-100">
-      <div className="absolute top-4 left-4 right-16 z-[400] bg-white/90 backdrop-blur-md p-3 rounded-2xl shadow-lg border border-slate-100 flex items-center gap-3">
-        <div className="w-3 h-3 rounded-full bg-emerald-500 animate-[pulse_2s_ease-in-out_infinite]"></div>
-        <div>
-          <p className="font-bold text-slate-800 text-sm leading-tight">Layered Interactive Map</p>
-          <p className="text-[10px] text-slate-500 font-medium">{location ? 'Live tracking active' : (error ? 'GPS Error' : 'Acquiring GPS...')}</p>
+    <div className="flex h-[calc(100vh-120px)] w-full relative overflow-hidden bg-slate-100">
+      <motion.div 
+        initial={{ opacity: 0 }} 
+        animate={{ opacity: 1 }} 
+        exit={{ opacity: 0 }} 
+        className="flex-1 relative z-0"
+      >
+        <div className="absolute top-4 left-4 right-16 z-[400] bg-white/90 backdrop-blur-md p-3 rounded-2xl shadow-lg border border-slate-100 flex items-center gap-3">
+          <div className="w-3 h-3 rounded-full bg-emerald-500 animate-[pulse_2s_ease-in-out_infinite]"></div>
+          <div>
+            <p className="font-bold text-slate-800 text-sm leading-tight">Layered Interactive Map</p>
+            <p className="text-[10px] text-slate-500 font-medium">{location ? 'Live tracking active' : (error ? 'GPS Error' : 'Acquiring GPS...')}</p>
+          </div>
         </div>
-      </div>
 
-      <button onClick={() => setRecenterTrigger(p => p+1)} className="absolute bottom-24 right-4 z-[400] bg-white p-3 rounded-full shadow-xl border border-slate-100 text-slate-700 hover:text-primary-600 active:scale-95 transition-all">
-        <Navigation size={22} className="fill-current rotate-45" />
-      </button>
+        <button onClick={() => setRecenterTrigger(p => p+1)} className="absolute bottom-24 right-4 z-[400] bg-white p-3 rounded-full shadow-xl border border-slate-100 text-slate-700 hover:text-primary-600 active:scale-95 transition-all">
+          <Navigation size={22} className="fill-current rotate-45" />
+        </button>
 
-      <MapContainer center={[28.718, 77.215]} zoom={16} style={{ height: '100%', width: '100%', zIndex: 0 }} zoomControl={false}>
-        <LayersControl position="bottomleft">
+        <MapContainer center={[28.718, 77.215]} zoom={16} style={{ height: '100%', width: '100%', zIndex: 0 }} zoomControl={false}>
+          <LayersControl position="bottomleft">
+            <LayersControl.BaseLayer checked name="Park Map (OSM)">
+              <TileLayer attribution='&copy; OpenStreetMap' url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+            </LayersControl.BaseLayer>
+            <LayersControl.BaseLayer name="Satellite View">
+              <TileLayer url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}" />
+            </LayersControl.BaseLayer>
+
+            <LayersControl.Overlay checked name="Facilities & Gates">
+              <LayerGroup>
+                <Marker position={[28.718, 77.215]}><Popup><strong>Gate 1</strong></Popup></Marker>
+                <Marker position={[28.719, 77.212]}><Popup><strong>Restroom</strong></Popup></Marker>
+              </LayerGroup>
+            </LayersControl.Overlay>
+
+            <LayersControl.Overlay checked name="Flora & Fauna">
+              <LayerGroup>
+                <Marker position={[28.716, 77.218]}><Popup><strong>Neem Tree</strong><br/><a href="/flora/1042">View Details</a></Popup></Marker>
+              </LayerGroup>
+            </LayersControl.Overlay>
+
+            <LayersControl.Overlay checked name="Community Memories">
+              <LayerGroup>
+                {memories.map(m => (
+                  <Marker key={m.id} position={[m.lat, m.lng]}>
+                    <Popup>
+                      <div className="text-center font-sans">
+                        <p className="text-[10px] uppercase font-bold text-slate-400 mb-1">{m.userName}'s Memory</p>
+                        <p className="text-sm font-bold text-slate-800 italic">"{m.text}"</p>
+                      </div>
+                    </Popup>
+                  </Marker>
+                ))}
+              </LayerGroup>
+            </LayersControl.Overlay>
+
+            <LayersControl.Overlay name="Green Points (Hidden)">
+              <LayerGroup>
+                {mockPaths.greenPoints.map(gp => (
+                  <Marker key={gp.id} position={[gp.lat, gp.lng]}><Popup>Unlock to earn {gp.points} PTS!</Popup></Marker>
+                ))}
+              </LayerGroup>
+            </LayersControl.Overlay>
+          </LayersControl>
           
-          <LayersControl.BaseLayer checked name="Park Map (OSM)">
-            <TileLayer attribution='&copy; OpenStreetMap' url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-          </LayersControl.BaseLayer>
-          <LayersControl.BaseLayer name="Satellite View">
-            <TileLayer url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}" />
-          </LayersControl.BaseLayer>
+          <MapController centerPos={location} shouldRecenter={recenterTrigger > 0} />
+          <GeofenceGamifier location={location} />
 
-          <LayersControl.Overlay checked name="Facilities & Gates">
-            <LayerGroup>
-              <Marker position={[28.718, 77.215]}><Popup><strong>Gate 1</strong></Popup></Marker>
-              <Marker position={[28.719, 77.212]}><Popup><strong>Restroom</strong></Popup></Marker>
-            </LayerGroup>
-          </LayersControl.Overlay>
-
-          <LayersControl.Overlay checked name="Flora & Fauna">
-            <LayerGroup>
-              <Marker position={[28.716, 77.218]}><Popup><strong>Neem Tree</strong><br/><a href="/flora/1042">View Details</a></Popup></Marker>
-            </LayerGroup>
-          </LayersControl.Overlay>
-
-          <LayersControl.Overlay checked name="Community Memories">
-            <LayerGroup>
-              {memories.map(m => (
-                <Marker key={m.id} position={[m.lat, m.lng]}>
-                  <Popup>
-                    <div className="text-center font-sans">
-                      <p className="text-[10px] uppercase font-bold text-slate-400 mb-1">{m.userName}'s Memory</p>
-                      <p className="text-sm font-bold text-slate-800 italic">"{m.text}"</p>
-                    </div>
-                  </Popup>
-                </Marker>
-              ))}
-            </LayerGroup>
-          </LayersControl.Overlay>
-
-          <LayersControl.Overlay name="Green Points (Hidden)">
-            <LayerGroup>
-              {mockPaths.greenPoints.map(gp => (
-                <Marker key={gp.id} position={[gp.lat, gp.lng]}><Popup>Unlock to earn {gp.points} PTS!</Popup></Marker>
-              ))}
-            </LayerGroup>
-          </LayersControl.Overlay>
-
-        </LayersControl>
-        
-        <MapController centerPos={location} shouldRecenter={recenterTrigger > 0} />
-        <GeofenceGamifier location={location} />
-
-        {location && (
-          <Marker position={[location.lat, location.lng]} icon={BlueDotIcon}>
-            <Popup><strong>It's You!</strong><br/>Accuracy: {Math.round(location.accuracy)}m</Popup>
-          </Marker>
+          {location && (
+            <Marker position={[location.lat, location.lng]} icon={BlueDotIcon}>
+              <Popup><strong>It's You!</strong><br/>Accuracy: {Math.round(location.accuracy)}m</Popup>
+            </Marker>
+          )}
         </MapContainer>
 
         {/* Floating Toggle Button (visible when panel closed) */}
@@ -172,9 +173,7 @@ export default function MapView() {
             <Filter size={20} />
           </button>
         )}
-      </MapContainer>
-    </motion.div>
-      </div>
+      </motion.div>
 
       {/* Filter Panel */}
       <div 
