@@ -12,7 +12,7 @@ export default function Layout({ children }) {
     { label: 'Home', path: '/park/yamuna-biodiversity-park' },
     { label: 'Species Map', path: '/map' },
     { label: 'Flora Detail', path: '/flora/1042' },
-    { label: 'Community Records', path: '/events' },
+    { label: 'Upcoming Events', path: '/events' },
     { label: 'About', path: '/about' }
   ];
 

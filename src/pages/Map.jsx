@@ -89,66 +89,58 @@ export default function MapView() {
   const [panelOpen, setPanelOpen] = useState(false);
 
   return (
-    <div className="flex h-[calc(100vh-120px)] w-full relative overflow-hidden bg-slate-100">
+    <div className="flex h-[calc(100vh-120px)] w-full relative overflow-hidden" style={{ backgroundColor: '#F9F8F1' }}>
       <motion.div 
         initial={{ opacity: 0 }} 
         animate={{ opacity: 1 }} 
         exit={{ opacity: 0 }} 
         className="flex-1 relative z-0"
       >
-        <div className="absolute top-4 left-4 right-16 z-[400] bg-white/90 backdrop-blur-md p-3 rounded-2xl shadow-lg border border-slate-100 flex items-center gap-3">
-          <div className="w-3 h-3 rounded-full bg-emerald-500 animate-[pulse_2s_ease-in-out_infinite]"></div>
+        <div className="absolute top-4 left-4 right-16 z-[400] bg-white/80 backdrop-blur-xl p-4 rounded-[1.5rem] shadow-xl border border-white/50 flex items-center gap-4">
+          <div className="w-3 h-3 rounded-full bg-emerald-500 animate-[pulse_2s_ease-in-out_infinite] shadow-[0_0_8px_rgba(16,185,129,0.5)]"></div>
           <div>
-            <p className="font-bold text-slate-800 text-sm leading-tight">Layered Interactive Map</p>
-            <p className="text-[10px] text-slate-500 font-medium">{location ? 'Live tracking active' : (error ? 'GPS Error' : 'Acquiring GPS...')}</p>
+            <p style={{ fontFamily: "'Playfair Display', serif" }} className="font-bold text-[#1B3022] text-base leading-tight tracking-tight">Interactive Biodiversity Map</p>
+            <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mt-0.5">{location ? 'Live tracking active' : (error ? 'GPS Error' : 'Acquiring GPS...')}</p>
           </div>
         </div>
 
-        <button onClick={() => setRecenterTrigger(p => p+1)} className="absolute bottom-24 right-4 z-[400] bg-white p-3 rounded-full shadow-xl border border-slate-100 text-slate-700 hover:text-primary-600 active:scale-95 transition-all">
-          <Navigation size={22} className="fill-current rotate-45" />
+        <button onClick={() => setRecenterTrigger(p => p+1)} className="absolute bottom-24 right-4 z-[400] bg-white p-4 rounded-full shadow-2xl border border-slate-100 text-[#1B3022] hover:text-primary-600 active:scale-90 transition-all">
+          <Navigation size={24} className="fill-current rotate-45" />
         </button>
 
         <MapContainer center={[28.718, 77.215]} zoom={16} style={{ height: '100%', width: '100%', zIndex: 0 }} zoomControl={false}>
           <LayersControl position="bottomleft">
-            <LayersControl.BaseLayer checked name="Park Map (OSM)">
+            <LayersControl.BaseLayer checked name="Topographic">
               <TileLayer attribution='&copy; OpenStreetMap' url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
             </LayersControl.BaseLayer>
-            <LayersControl.BaseLayer name="Satellite View">
+            <LayersControl.BaseLayer name="Satellite">
               <TileLayer url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}" />
             </LayersControl.BaseLayer>
 
-            <LayersControl.Overlay checked name="Facilities & Gates">
+            <LayersControl.Overlay checked name="Facilities">
               <LayerGroup>
                 <Marker position={[28.718, 77.215]}><Popup><strong>Gate 1</strong></Popup></Marker>
                 <Marker position={[28.719, 77.212]}><Popup><strong>Restroom</strong></Popup></Marker>
               </LayerGroup>
             </LayersControl.Overlay>
 
-            <LayersControl.Overlay checked name="Flora & Fauna">
+            <LayersControl.Overlay checked name="Flora Nodes">
               <LayerGroup>
-                <Marker position={[28.716, 77.218]}><Popup><strong>Neem Tree</strong><br/><a href="/flora/1042">View Details</a></Popup></Marker>
+                <Marker position={[28.716, 77.218]}><Popup><strong>Neem Tree</strong><br/><a href="/flora/1042" className="text-primary-600 font-bold">View Scientific Profile</a></Popup></Marker>
               </LayerGroup>
             </LayersControl.Overlay>
 
-            <LayersControl.Overlay checked name="Community Memories">
+            <LayersControl.Overlay checked name="Memories">
               <LayerGroup>
                 {memories.map(m => (
                   <Marker key={m.id} position={[m.lat, m.lng]}>
                     <Popup>
-                      <div className="text-center font-sans">
+                      <div className="text-center font-sans p-1">
                         <p className="text-[10px] uppercase font-bold text-slate-400 mb-1">{m.userName}'s Memory</p>
                         <p className="text-sm font-bold text-slate-800 italic">"{m.text}"</p>
                       </div>
                     </Popup>
                   </Marker>
-                ))}
-              </LayerGroup>
-            </LayersControl.Overlay>
-
-            <LayersControl.Overlay name="Green Points (Hidden)">
-              <LayerGroup>
-                {mockPaths.greenPoints.map(gp => (
-                  <Marker key={gp.id} position={[gp.lat, gp.lng]}><Popup>Unlock to earn {gp.points} PTS!</Popup></Marker>
                 ))}
               </LayerGroup>
             </LayersControl.Overlay>
@@ -164,77 +156,82 @@ export default function MapView() {
           )}
         </MapContainer>
 
-        {/* Floating Toggle Button (visible when panel closed) */}
+        {/* Floating Toggle Button */}
         {!panelOpen && (
           <button 
             onClick={() => setPanelOpen(true)}
-            className="absolute top-4 right-4 z-[400] bg-white border border-gray-300 shadow-sm p-2 flex items-center justify-center text-header hover:text-primary-600"
+            className="absolute top-4 right-4 z-[400] bg-white border border-slate-200 shadow-xl p-3 rounded-2xl flex items-center justify-center text-[#1B3022] hover:text-primary-600 border border-white/50 active:scale-95 transition-all"
           >
-            <Filter size={20} />
+            <Filter size={22} strokeWidth={2.5} />
           </button>
         )}
       </motion.div>
 
       {/* Filter Panel */}
       <div 
-        className={`bg-white border-l border-divider shadow-[-4px_0_15px_-5px_rgba(0,0,0,0.1)] transition-all duration-300 flex flex-col z-[500] ${panelOpen ? 'w-80' : 'w-0 overflow-hidden'}`}
+        className={`bg-white border-l border-slate-200 shadow-[-10px_0_30px_-10px_rgba(27,48,34,0.1)] transition-all duration-500 ease-out flex flex-col z-[500] ${panelOpen ? 'w-80' : 'w-0 overflow-hidden'}`}
       >
-        <div className="flex items-center justify-between p-4 border-b border-divider bg-gray-50 flex-shrink-0">
-          <div className="flex items-center gap-2 text-header font-bold">
-            <Filter size={18} className="text-primary-600" /> Options
+        <div className="flex items-center justify-between p-6 border-b border-slate-100 bg-[#F9F8F1] flex-shrink-0">
+          <div style={{ fontFamily: "'Playfair Display', serif" }} className="flex items-center gap-2 text-[#1B3022] font-bold text-xl">
+            <Filter size={20} className="text-primary-600" /> Sidebar
           </div>
-          <button onClick={() => setPanelOpen(false)} className="text-gray-500 hover:text-header p-1">
+          <button onClick={() => setPanelOpen(false)} className="text-slate-400 hover:text-[#1B3022] p-2 bg-white rounded-full shadow-sm border border-slate-100 transition-all">
             <ChevronRight size={20} />
           </button>
         </div>
 
-        <div className="flex-1 overflow-y-auto p-4 space-y-6">
+        <div className="flex-1 overflow-y-auto p-6 space-y-8">
           {/* Search Box */}
           <div>
-            <label className="text-xs font-bold uppercase tracking-wider text-gray-500 mb-2 block">Search Node</label>
+            <label className="text-[10px] font-bold uppercase tracking-widest text-[#1B3022]/70 mb-3 block">Species Identity</label>
             <div className="relative">
-              <input type="text" placeholder="Species name or ID..." className="w-full border border-gray-300 rounded-sm py-2 pl-3 pr-8 text-sm focus:outline-none focus:border-primary-500" />
-              <Search size={16} className="absolute right-2.5 top-2.5 text-gray-400" />
+              <input type="text" placeholder="Common name or ID..." className="w-full bg-slate-50 border border-slate-200 rounded-2xl py-3.5 pl-4 pr-10 text-sm focus:outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/5 transition-all" />
+              <Search size={18} className="absolute right-3.5 top-3.5 text-slate-400" />
             </div>
           </div>
 
           {/* Taxonomy Filter */}
           <div>
-            <label className="text-xs font-bold uppercase tracking-wider text-gray-500 mb-2 block">Taxonomy</label>
-            <select className="w-full border border-gray-300 rounded-sm py-2 px-3 text-sm focus:outline-none focus:border-primary-500 bg-white">
+            <label className="text-[10px] font-bold uppercase tracking-widest text-[#1B3022]/70 mb-3 block">Scientific Group</label>
+            <select className="w-full bg-slate-50 border border-slate-200 rounded-2xl py-3.5 px-4 text-sm focus:outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/5 transition-all outline-none appearance-none">
               <option>All Kingdoms</option>
               <option>Plantae (Plants)</option>
               <option>Animalia (Animals)</option>
               <option>Fungi</option>
             </select>
           </div>
-
-          {/* Date Range */}
+          
+          {/* Date Range - New Feature */}
           <div>
-            <label className="text-xs font-bold uppercase tracking-wider text-gray-500 mb-2 block">Date Range</label>
-            <input type="date" className="w-full border border-gray-300 rounded-sm py-2 px-3 text-sm focus:outline-none focus:border-primary-500 bg-white" />
+            <label className="text-[10px] font-bold uppercase tracking-widest text-[#1B3022]/70 mb-3 block">Observation Window</label>
+            <div className="flex flex-col gap-2">
+              <input type="date" className="w-full bg-slate-50 border border-slate-200 rounded-2xl py-3 px-4 text-sm focus:outline-none focus:border-primary-500 focus:ring-4 focus:ring-primary-500/5 transition-all outline-none" />
+              <div className="flex justify-between text-[9px] font-bold text-slate-400 uppercase tracking-tighter px-1">
+                <span>Earliest</span>
+                <span>Latest</span>
+              </div>
+            </div>
           </div>
 
           {/* Region */}
           <div>
-            <label className="text-xs font-bold uppercase tracking-wider text-gray-500 mb-2 block">Region</label>
-            <div className="space-y-2 mt-2">
-              <label className="flex items-center gap-2 cursor-pointer text-sm text-header">
-                <input type="checkbox" defaultChecked className="accent-primary-600" /> Yamuna Biodiversity Park
+            <label className="text-[10px] font-bold uppercase tracking-widest text-[#1B3022]/70 mb-3 block">Active Biodiversity Zone</label>
+            <div className="space-y-3 mt-4">
+              <label className="flex items-center gap-3 cursor-pointer text-sm font-semibold text-[#1B3022] group">
+                <input type="checkbox" defaultChecked className="w-5 h-5 rounded-lg border-slate-300 text-primary-600 focus:ring-primary-500 transition-all accent-primary-600" />
+                <span className="group-hover:text-primary-700">Yamuna Biodiversity Park</span>
               </label>
-              <label className="flex items-center gap-2 cursor-pointer text-sm text-header">
-                <input type="checkbox" defaultChecked className="accent-primary-600" /> Aravalli Biodiversity Park
-              </label>
-              <label className="flex items-center gap-2 cursor-pointer text-sm text-header">
-                <input type="checkbox" className="accent-primary-600" /> Neela Hauz
+              <label className="flex items-center gap-3 cursor-pointer text-sm font-semibold text-[#1B3022] group">
+                <input type="checkbox" defaultChecked className="w-5 h-5 rounded-lg border-slate-300 text-primary-600 focus:ring-primary-500 transition-all accent-primary-600" />
+                <span className="group-hover:text-primary-700">Aravalli Biodiversity Park</span>
               </label>
             </div>
           </div>
         </div>
 
-        <div className="p-4 border-t border-divider bg-gray-50 flex-shrink-0">
-          <button className="w-full bg-primary-600 hover:bg-primary-500 text-white font-bold py-2 rounded-sm text-sm transition-colors">
-            Apply Filters
+        <div className="p-6 border-t border-slate-100 bg-[#F9F8F1] flex-shrink-0">
+          <button className="w-full bg-[#1B3022] hover:bg-black text-white font-bold py-4 rounded-2xl text-sm transition-all shadow-lg active:scale-[0.98]">
+            Apply Layer Filters
           </button>
         </div>
       </div>

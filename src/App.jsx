@@ -7,7 +7,7 @@ import Home from './pages/Home';
 import Park from './pages/Park';
 import MapView from './pages/Map';
 import Flora from './pages/Flora';
-import Community from './pages/Community';
+import Events from './pages/Events';
 import Profile from './pages/Profile';
 import Login from './pages/Login';
 import Layout from './components/layout/Layout';
@@ -64,7 +64,7 @@ function App() {
               <Route path="/flora/:floraId" element={<Flora />} />
               
               {/* Protected UGC Route */}
-              <Route path="/events" element={<ProtectedRoute><Community /></ProtectedRoute>} />
+              <Route path="/events" element={<ProtectedRoute><Events /></ProtectedRoute>} />
               <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
               
               <Route path="*" element={<Navigate to="/" replace />} />
