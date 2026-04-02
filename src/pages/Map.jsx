@@ -1,11 +1,9 @@
-import React, { useRef, useEffect } from 'react';
-import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
+import React, { useState } from 'react';
+import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
-import { motion } from 'framer-motion';
-import { Navigation } from 'lucide-react';
+import { Filter, ChevronRight, ChevronLeft, Search } from 'lucide-react';
 import useLiveLocation from '../hooks/useLiveLocation';
 
-// Fix Leaflet's default icon path issues with Vite
 import icon from 'leaflet/dist/images/marker-icon.png';
 import iconShadow from 'leaflet/dist/images/marker-shadow.png';
 import L from 'leaflet';
@@ -18,105 +16,121 @@ let DefaultIcon = L.icon({
 });
 L.Marker.prototype.options.icon = DefaultIcon;
 
-// Custom animated blue dot for user
-const BlueDotIcon = L.divIcon({
-  className: 'live-location-marker',
-  html: `<div class="relative flex h-6 w-6">
-           <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
-           <span class="relative inline-flex rounded-full h-6 w-6 border-2 border-white bg-blue-500 shadow-md"></span>
-         </div>`,
-  iconSize: [24, 24],
-  iconAnchor: [12, 12]
-});
-
-// Component to programmatically re-center map
-function MapController({ centerPos, shouldRecenter }) {
-  const map = useMap();
-  useEffect(() => {
-    if (shouldRecenter && centerPos) {
-      map.flyTo([centerPos.lat, centerPos.lng], 17, { animate: true, duration: 1 });
-    }
-  }, [centerPos, shouldRecenter, map]);
-  return null;
-}
-
 export default function MapView() {
-  const parkCenter = [28.718, 77.215]; // Yamuna Biodiversity Park approx coordinates
-  const { location, error } = useLiveLocation();
-  const [recenterTrigger, setRecenterTrigger] = React.useState(0);
-
-  const handleRecenter = () => {
-    setRecenterTrigger(prev => prev + 1);
-  };
+  const parkCenter = [28.718, 77.215];
+  const { location } = useLiveLocation();
+  const [panelOpen, setPanelOpen] = useState(true);
 
   return (
-    <motion.div 
-      initial={{ opacity: 0 }} 
-      animate={{ opacity: 1 }} 
-      exit={{ opacity: 0 }}
-      className="h-[calc(100vh-120px)] w-full relative z-0 bg-slate-100"
-    >
-      <div className="absolute top-4 left-4 right-4 z-[400] bg-white/90 backdrop-blur-md p-3 rounded-2xl shadow-lg border border-slate-100 flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className="w-3 h-3 rounded-full bg-emerald-500 animate-[pulse_2s_ease-in-out_infinite]"></div>
-          <div>
-            <p className="font-bold text-slate-800 text-sm leading-tight">Interactive Park Map</p>
-            <p className="text-[10px] text-slate-500 font-medium">{location ? 'Live tracking active' : (error ? 'GPS Error' : 'Acquiring GPS...')}</p>
-          </div>
-        </div>
-      </div>
+    <div className="flex h-[calc(100vh-64px)] w-full overflow-hidden bg-gray-100">
+      {/* Map Area */}
+      <div className="flex-1 relative z-0 h-full">
+        <MapContainer 
+          center={location ? [location.lat, location.lng] : parkCenter} 
+          zoom={15} 
+          style={{ height: '100%', width: '100%', zIndex: 0 }}
+        >
+          <TileLayer
+            attribution='&copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors'
+            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          />
+          
+          {location && (
+            <Marker position={[location.lat, location.lng]}>
+              <Popup className="font-sans">
+                <strong>Current Position</strong><br />Accuracy: {Math.round(location.accuracy)}m
+              </Popup>
+            </Marker>
+          )}
 
-      <button 
-        onClick={handleRecenter}
-        className="absolute bottom-24 right-4 z-[400] bg-white p-3 rounded-full shadow-xl border border-slate-100 text-slate-700 hover:text-primary-600 active:scale-95 transition-all focus:outline-none"
-        aria-label="Re-center map"
-      >
-        <Navigation size={22} className="fill-current rotate-45" />
-      </button>
-
-      <MapContainer 
-        center={location ? [location.lat, location.lng] : parkCenter} 
-        zoom={16} 
-        style={{ height: '100%', width: '100%', zIndex: 0 }}
-        zoomControl={false}
-      >
-        <TileLayer
-          attribution='&copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors'
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        />
-        
-        {/* Map Controller for programmatic recentering */}
-        <MapController centerPos={location} shouldRecenter={recenterTrigger > 0} />
-        
-        {/* User's Live Location */}
-        {location && (
-          <Marker position={[location.lat, location.lng]} icon={BlueDotIcon}>
+          <Marker position={[28.718, 77.215]}>
             <Popup className="font-sans">
-              <strong>It's You!</strong><br />Accuracy: {Math.round(location.accuracy)}m
+              <strong>Entry Gate 1</strong>
             </Popup>
           </Marker>
+
+          <Marker position={[28.716, 77.218]}>
+            <Popup className="font-sans">
+              <strong>Azadirachta indica</strong><br />ID: 1042<br/><a href="/flora/1" className="text-primary-600 font-bold">View Detail</a>
+            </Popup>
+          </Marker>
+        </MapContainer>
+
+        {/* Floating Toggle Button (visible when panel closed) */}
+        {!panelOpen && (
+          <button 
+            onClick={() => setPanelOpen(true)}
+            className="absolute top-4 right-4 z-[400] bg-white border border-gray-300 shadow-sm p-2 flex items-center justify-center text-header hover:text-primary-600"
+          >
+            <Filter size={20} />
+          </button>
         )}
+      </div>
 
-        {/* Mock Static POIs */}
-        <Marker position={[28.718, 77.215]}>
-          <Popup className="font-sans">
-            <strong>Entry Gate 1</strong><br />Scan QR here.
-          </Popup>
-        </Marker>
+      {/* Filter Panel */}
+      <div 
+        className={`bg-white border-l border-divider shadow-[-4px_0_15px_-5px_rgba(0,0,0,0.1)] transition-all duration-300 flex flex-col z-[500] ${panelOpen ? 'w-80' : 'w-0 overflow-hidden'}`}
+      >
+        <div className="flex items-center justify-between p-4 border-b border-divider bg-gray-50 flex-shrink-0">
+          <div className="flex items-center gap-2 text-header font-bold">
+            <Filter size={18} className="text-primary-600" /> Options
+          </div>
+          <button onClick={() => setPanelOpen(false)} className="text-gray-500 hover:text-header p-1">
+            <ChevronRight size={20} />
+          </button>
+        </div>
 
-        <Marker position={[28.716, 77.218]}>
-          <Popup className="font-sans">
-            <strong>Neem Tree</strong><br />Flora ID: 1042
-            <br/><a href="/flora/1042" className="text-primary-600 font-bold text-xs">View Details ↗</a>
-          </Popup>
-        </Marker>
+        <div className="flex-1 overflow-y-auto p-4 space-y-6">
+          {/* Search Box */}
+          <div>
+            <label className="text-xs font-bold uppercase tracking-wider text-gray-500 mb-2 block">Search Node</label>
+            <div className="relative">
+              <input type="text" placeholder="Species name or ID..." className="w-full border border-gray-300 rounded-sm py-2 pl-3 pr-8 text-sm focus:outline-none focus:border-primary-500" />
+              <Search size={16} className="absolute right-2.5 top-2.5 text-gray-400" />
+            </div>
+          </div>
 
-        <Marker position={[28.719, 77.212]}>
-          <Popup className="font-sans">
-            <strong>Restroom</strong><br />Public Facilities
-          </Popup>
-        </Marker>
-      </MapContainer>
-    </motion.div>
+          {/* Taxonomy Filter */}
+          <div>
+            <label className="text-xs font-bold uppercase tracking-wider text-gray-500 mb-2 block">Taxonomy</label>
+            <select className="w-full border border-gray-300 rounded-sm py-2 px-3 text-sm focus:outline-none focus:border-primary-500 bg-white">
+              <option>All Kingdoms</option>
+              <option>Plantae (Plants)</option>
+              <option>Animalia (Animals)</option>
+              <option>Fungi</option>
+            </select>
+          </div>
+
+          {/* Date Range */}
+          <div>
+            <label className="text-xs font-bold uppercase tracking-wider text-gray-500 mb-2 block">Date Range</label>
+            <input type="date" className="w-full border border-gray-300 rounded-sm py-2 px-3 text-sm focus:outline-none focus:border-primary-500 bg-white" />
+          </div>
+
+          {/* Region */}
+          <div>
+            <label className="text-xs font-bold uppercase tracking-wider text-gray-500 mb-2 block">Region</label>
+            <div className="space-y-2 mt-2">
+              <label className="flex items-center gap-2 cursor-pointer text-sm text-header">
+                <input type="checkbox" defaultChecked className="accent-primary-600" /> Yamuna Biodiversity Park
+              </label>
+              <label className="flex items-center gap-2 cursor-pointer text-sm text-header">
+                <input type="checkbox" defaultChecked className="accent-primary-600" /> Aravalli Biodiversity Park
+              </label>
+              <label className="flex items-center gap-2 cursor-pointer text-sm text-header">
+                <input type="checkbox" className="accent-primary-600" /> Neela Hauz
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <div className="p-4 border-t border-divider bg-gray-50 flex-shrink-0">
+          <button className="w-full bg-primary-600 hover:bg-primary-500 text-white font-bold py-2 rounded-sm text-sm transition-colors">
+            Apply Filters
+          </button>
+        </div>
+      </div>
+    </div>
   );
 }
+
