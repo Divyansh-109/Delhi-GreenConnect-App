@@ -9,11 +9,11 @@ export default function Layout({ children }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const navLinks = [
-    { label: 'Home', path: '/park/yamuna' },
-    { label: 'Species Dashboard', path: '/map' },
-    { label: 'Observations', path: '/flora/1' },
-    { label: 'Community', path: '/events' },
-    { label: 'About Component', path: '/about' }
+    { label: 'Home', path: '/park/yamuna-biodiversity-park' },
+    { label: 'Species Map', path: '/map' },
+    { label: 'Flora Detail', path: '/flora/1042' },
+    { label: 'Community Records', path: '/events' },
+    { label: 'About', path: '/about' }
   ];
 
   return (
@@ -34,9 +34,15 @@ export default function Layout({ children }) {
           </div>
 
           <div className="flex items-center gap-4">
-            <button className="hidden md:block bg-primary-600 hover:bg-primary-500 text-white text-sm font-bold px-5 py-2 rounded transition-colors">
-              {currentUser ? 'My Profile' : 'Login'}
-            </button>
+            {currentUser ? (
+              <Link to="/profile" className="hidden md:block bg-primary-600 hover:bg-primary-500 text-white text-sm font-bold px-5 py-2 rounded transition-colors shadow-md">
+                My Profile
+              </Link>
+            ) : (
+              <Link to="/login" className="hidden md:block bg-primary-600 hover:bg-primary-500 text-white text-sm font-bold px-5 py-2 rounded transition-colors shadow-md">
+                Login
+              </Link>
+            )}
             <button className="md:hidden text-white" onClick={() => setMobileMenuOpen(true)}>
               <Menu size={24} />
             </button>
@@ -59,7 +65,9 @@ export default function Layout({ children }) {
                 </Link>
               ))}
               <div className="border-t border-divider pt-4 mt-2">
-                <button className="w-full text-left font-bold text-primary-600">Login</button>
+                <Link to={currentUser ? "/profile" : "/login"} onClick={() => setMobileMenuOpen(false)} className="w-full text-left font-bold text-primary-600">
+                  {currentUser ? "My Profile" : "Login"}
+                </Link>
               </div>
             </nav>
           </div>
