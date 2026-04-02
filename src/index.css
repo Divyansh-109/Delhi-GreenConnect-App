@@ -1,14 +1,33 @@
 @import "tailwindcss";
 
 @theme {
-  --color-primary-500: #22c55e;
-  --color-primary-600: #16a34a;
-  --color-primary-700: #15803d;
+  /* IBIS Scientific Palette */
+  --color-primary-50:  #eaf1ea;
+  --color-primary-100: #d6e3d5;
+  --color-primary-500: #2D5A27; /* Bright Forest Green */
+  --color-primary-600: #24481f;
+  --color-primary-700: #1b3617;
+  
+  --color-header: #1A1A1A; /* Deep Charcoal Base */
+  --color-divider: #F4F4F4; /* Light Gray */
+  --color-border-color: #E5E7EB;
+  
+  --color-sos: #E63946; /* Retained emergency */
+
+  /* Neutral Sans-Serif strictly */
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
 }
 
 body {
   margin: 0;
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
-  background-color: #f8fafc;
-  color: #0f172a;
+  font-family: var(--font-sans);
+  background-color: #ffffff;
+  color: #1a1a1a;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Enforce strict grid boundaries */
+.ibis-card {
+  border: 1px solid var(--color-border-color);
+  background-color: #ffffff;
 }
