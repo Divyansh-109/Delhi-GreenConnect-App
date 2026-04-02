@@ -1,4 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { useParams, Link } from 'react-router-dom';
+import { MapPin, Clock, Camera, CheckCircle2, ChevronRight, Navigation, Star } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { QrCode, MapPin, AlertTriangle, Wind, Users, ArrowRight } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
@@ -87,12 +89,24 @@ function ActionCard({ title, icon, color, highlightHover }) {
   );
 }
 
-function StatCard({ title, value, icon }) {
+function HighlightCard({ title, time, location, image, description }) {
   return (
-    <div className="bg-white p-5 rounded-3xl shadow-inner shadow-slate-50 border border-slate-100 flex flex-col items-start hover:scale-[1.02] active:scale-[0.98] transition-transform cursor-default">
-      {icon}
-      <span className="text-2xl font-black text-primary-700 leading-none my-1 tracking-tight">{value}</span>
-      <span className="text-xs text-slate-500 font-medium tracking-wide">{title}</span>
+    <div className="bg-white rounded-2xl overflow-hidden shadow-sm border border-slate-100 flex flex-col hover:shadow-md transition-shadow">
+      <div className="relative h-36 w-full">
+        <img src={image} alt={title} className="w-full h-full object-cover" />
+        <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-md text-primary-700 text-[10px] font-black uppercase tracking-wider px-3 py-1.5 rounded-full shadow-sm">
+          {time}
+        </div>
+      </div>
+      <div className="p-4">
+        <h4 className="font-black text-slate-800 text-lg leading-tight mb-1">{title}</h4>
+        <p className="flex items-center gap-1 text-[11px] font-bold text-emerald-600 uppercase tracking-wide mb-2">
+          <MapPin size={12} /> {location}
+        </p>
+        <p className="text-sm text-slate-500 leading-relaxed font-medium">
+          {description}
+        </p>
+      </div>
     </div>
   );
 }

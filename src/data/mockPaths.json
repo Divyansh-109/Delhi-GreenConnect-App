@@ -1,0 +1,13 @@
+{
+  "sosExitPath": [
+    {"lat": 28.7188, "lng": 77.2140},
+    {"lat": 28.7185, "lng": 77.2145},
+    {"lat": 28.7180, "lng": 77.2148},
+    {"lat": 28.7180, "lng": 77.2150}
+  ],
+  "greenPoints": [
+    {"id": "gp1", "lat": 28.7170, "lng": 77.2160, "name": "Hidden Butterfly Zone", "points": 15},
+    {"id": "gp2", "lat": 28.7190, "lng": 77.2130, "name": "Ancient Banyan", "points": 20},
+    {"id": "gp3", "lat": 28.7155, "lng": 77.2175, "name": "Secret Wetland Loop", "points": 50}
+  ]
+}

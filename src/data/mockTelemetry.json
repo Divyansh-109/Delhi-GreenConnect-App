@@ -1,0 +1,9 @@
+{
+  "yamuna-biodiversity-park": {
+    "aqi": 115,
+    "temperature": 32,
+    "crowdLevel": 68,
+    "historicAvg": 45,
+    "status": "Moderate Crowd, Fair Air Quality"
+  }
+}

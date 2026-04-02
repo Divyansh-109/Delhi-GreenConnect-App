@@ -8,6 +8,7 @@ import Park from './pages/Park';
 import MapView from './pages/Map';
 import Flora from './pages/Flora';
 import Community from './pages/Community';
+import Profile from './pages/Profile';
 import Login from './pages/Login';
 import Layout from './components/layout/Layout';
 import SOSButton from './components/safety/SOSButton';
@@ -16,14 +17,38 @@ import ProtectedRoute from './components/auth/ProtectedRoute';
 
 function App() {
   const [showPWA, setShowPWA] = useState(false);
+  const [deferredPrompt, setDeferredPrompt] = useState(null);
 
   useEffect(() => {
-    // 10 second timeout for "Add to Home Screen" standard flow
-    const timer = setTimeout(() => {
+    const handleBeforeInstallPrompt = (e) => {
+      e.preventDefault();
+      setDeferredPrompt(e);
       setShowPWA(true);
-    }, 10000);
-    return () => clearTimeout(timer);
+    };
+
+    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+
+    // Filter for standalone mode
+    if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone) {
+      setShowPWA(false);
+    }
+
+    return () => {
+      window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+    };
   }, []);
+
+  const handleInstallClick = async () => {
+    if (!deferredPrompt) {
+      setShowPWA(false);
+      return;
+    }
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    console.log(`User response to the install prompt: ${outcome}`);
+    setDeferredPrompt(null);
+    setShowPWA(false);
+  };
 
   return (
     <AuthProvider>
@@ -40,6 +65,7 @@ function App() {
               
               {/* Protected UGC Route */}
               <Route path="/events" element={<ProtectedRoute><Community /></ProtectedRoute>} />
+              <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
               
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
@@ -56,7 +82,7 @@ function App() {
             </div>
             <button 
               className="bg-white text-primary-600 px-4 py-2 rounded-lg font-semibold shadow-sm"
-              onClick={() => setShowPWA(false)}
+              onClick={handleInstallClick}
             >
               Add
             </button>

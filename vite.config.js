@@ -29,7 +29,14 @@ export default defineConfig({
             type: 'image/png'
           }
         ]
+      },
+      devOptions: {
+        enabled: true
       }
     })
   ],
+  server: {
+    host: '0.0.0.0',
+    port: 5173
+  }
 })
